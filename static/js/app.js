@@ -18,13 +18,16 @@ d3.json("static/samples.json").then(data => {
 
     d3.select("option").property("selected", true);
 
+    // Create a variable ID to hold the subject id for the plots
+
     id = dropdown.property('value')
     console.log(id)
 
-    dropdown.on("click", () =>{
+    // make the variable change when the dropdown menu changes
+    dropdown.on("click", () => {
         let id = dropdown.property("value");
         console.log(id);
-    
+
         // start data collecting with the selected id
 
         // Selecting Data for bar chart - bubble chart
@@ -33,10 +36,10 @@ d3.json("static/samples.json").then(data => {
         let out_ids = sample_data["otu_ids"];
         let values = sample_data["sample_values"];
         let labels = sample_data["otu_labels"];
-        
-        let topout = out_ids.slice(0,10).map(ids => "OTU" + String(ids)).reverse();
-        let topvalues = values.slice(0,10).reverse();
-        let toplabels = labels.slice(0,10).reverse();
+
+        let topout = out_ids.slice(0, 10).map(ids => "OTU" + String(ids)).reverse();
+        let topvalues = values.slice(0, 10).reverse();
+        let toplabels = labels.slice(0, 10).reverse();
 
         console.log(topout);
         console.log(topvalues);
@@ -50,32 +53,39 @@ d3.json("static/samples.json").then(data => {
         let location = meta_data["location"];
         let age = meta_data["age"];
         let washes = meta_data["wfreq"]
-        
+
         console.log(ethnic);
         console.log(sex);
         console.log(location);
-        
+
+        // create data and format for the output of the meta-data section in the index
+
+        // link the sections and remove anything that is in the section everytime ID changes
         let person_data = d3.select("#sample-metadata");
 
         person_data.selectAll("*").remove();
+
+        // add the values to each parragraph
 
         person_data.append("p").text("Ethnicity: " + ethnic);
         person_data.append("p").text("Gender: " + sex);
         person_data.append("p").text("Location: " + location);
         person_data.append("p").text("Age: " + age);
 
+        // Define and link the bar chart
+
         let barchart = d3.select("#bar")
-        
+
         barchart.selectAll("*").remove();
 
 
-        // Add responsiveness configuration for different screen widths
+        // add reponsivE true for autoadjust
         let config = {
             responsive: true
 
         }
 
-        // Draw bar chart
+        //create Trace and Layout for bar chart 
         let barT = {
             x: topvalues,
             y: topout,
@@ -84,7 +94,6 @@ d3.json("static/samples.json").then(data => {
             marker: {
                 color: "#735178"
             },
-            hoverinfo: "x+y+text",
             hovertext: toplabels,
         };
 
@@ -98,12 +107,18 @@ d3.json("static/samples.json").then(data => {
             }
         };
 
+        //PLOT!!!
+
         Plotly.newPlot("bar", [barT], barL, config);
 
+        // Define and link the bubble chart
+
         let bubblechart = d3.select("#bubble")
-        
+
+        // clean data so that a new chart shows everytime id gets changed.
         bubblechart.selectAll("*").remove();
-        
+
+        // create trace and layout for bubble chart.
         let bubbleT = {
             x: out_ids,
             y: values,
@@ -111,7 +126,7 @@ d3.json("static/samples.json").then(data => {
             mode: "markers",
             marker: {
                 size: values,
-                sizeref: 2*Math.max(...values) / (90**2),
+                sizeref: 2 * Math.max(...values) / (90 ** 2),
                 sizemode: "area",
                 color: "#E5E0FF"
             },
@@ -130,13 +145,17 @@ d3.json("static/samples.json").then(data => {
             }
         };
 
+        //PLOT!!!!!
         Plotly.newPlot("bubble", [bubbleT], bubbleL, config);
 
+        // Link with Guage
+
         let gaugechart = d3.select("#gauge")
-        
+
+        // Delete values for gauge graph when the ID gets changed
         gaugechart.selectAll("*").remove();
 
-
+        // Create trace and layout for the gauge chart
         let gaugeT = {
             type: "indicator",
             mode: "gauge",
@@ -152,7 +171,7 @@ d3.json("static/samples.json").then(data => {
                 },
                 axis: {
                     range: [null, 12],
-                    tickvals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ],
+                    tickvals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
                     visible: true,
                     ticks: "inside"
                 }
@@ -169,19 +188,11 @@ d3.json("static/samples.json").then(data => {
             }
         }
 
+        //PLOT!!!!
         Plotly.newPlot("gauge", [gaugeT], gaugeL, config)
 
 
-    
-    
-    
-    })
-
-
-
-
-
-
+    });
 
 
 
